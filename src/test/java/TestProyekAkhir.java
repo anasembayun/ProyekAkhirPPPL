@@ -1,6 +1,7 @@
 import ProyekAkhir.*;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -12,9 +13,12 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import static org.junit.Assert.assertEquals;
+
 public class TestProyekAkhir {
     private static WebDriver driver;
-    
+    public static ArrayList<DataProduct> dataProduct = new ArrayList<>();
+
     @BeforeClass
     public static void setUpClass() {
         WebDriverManager.chromedriver().setup();  
@@ -31,34 +35,31 @@ public class TestProyekAkhir {
         newUser.setFirstName("Angkasa");
         newUser.setLastName("Manggala");
         newUser.setNewsletter();
-        newUser.setEmail("angkasla16@gmail.com");//ini harus diganti tiap testing
+        newUser.setEmail("angkasla@gmail.com");//ini harus diganti tiap testing
         newUser.setPwd("permisiadaorangcakepn1H");
         newUser.setConfirmPwd("permisiadaorangcakepn1H");
         profilePage profile = newUser.createButton();
         String resultUrl = profile.getURL();
-        Assert.assertEquals("https://magento.softwaretestingboard.com/customer/account/",resultUrl);
-        productPage newProducts = profile.selectNew();
-        detailPage infoProduct = newProducts.infoProduct();
-        Thread.sleep(2000);
+        assertEquals("https://magento.softwaretestingboard.com/customer/account/",resultUrl);
+
         //product 1
-        driver.findElement(new By.ById("option-label-size-143-item-169")).click();
-        driver.findElement(new By.ById("option-label-color-93-item-57")).click();
-        driver.findElement(new By.ById("product-addtocart-button")).click();
-        
-        //product2
-        driver.findElement(new By.ByClassName("product-item-link")).click();
-        Thread.sleep(2000);
-        driver.findElement(new By.ById("option-label-size-143-item-172")).click();
-        driver.findElement(new By.ById("option-label-color-93-item-50")).click();
-        driver.findElement(new By.ById("qty")).clear();
-        driver.findElement(new By.ById("qty")).sendKeys("2");
-        
-        driver.findElement(new By.ById("product-addtocart-button")).click();
-        Thread.sleep(5000);
-        driver.findElement(new By.ByClassName("minicart-wrapper")).click();
-        driver.findElement(new By.ById("top-cart-btn-checkout")).click();
-        Thread.sleep(15000);
-        
+        productPage newProducts = profile.selectNew();
+        newProducts.clickProduct(0);
+        newProducts.setQty(3);
+        dataProduct.add(new DataProduct(newProducts.getTitle(), newProducts.getQty()));
+        newProducts.addToCart("3");
+        newProducts.clickProduct(1);
+        newProducts.setQty(2);
+        dataProduct.add(new DataProduct(newProducts.getTitle(), newProducts.getQty()));
+        newProducts.addToCart("5");
+        newProducts.clickIconCart();
+        assertEquals(dataProduct.size(), newProducts.getCart().size());
+        for (int i = 0; i < dataProduct.size(); i++) {
+            assertEquals(dataProduct.get(i).getName(), newProducts.getCart().get(i).getName());
+            assertEquals(dataProduct.get(i).getQty(), newProducts.getCart().get(i).getQty());
+        }
+        newProducts.clickCheckout();
+
         //User memasukkan Shipping Address dan Shipping Method
         formShipping shipping = new formShipping(driver);
         Thread.sleep(5000);
