@@ -9,7 +9,8 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class profilePage {
 
-    private Actions actions;
+    private Actions action;
+
     private By gear = By.xpath("//*[@id=\"ui-id-6\"]");
     private By bags = By.xpath("//*[@id=\"ui-id-25\"]");
     private WebDriver driver;
@@ -20,8 +21,9 @@ public class profilePage {
         return driver.getCurrentUrl();
     }
     public productPage selectNew(){
+        Actions action = new Actions(driver);
         WebElement menMenuElement = new WebDriverWait(driver, 10).until(ExpectedConditions.elementToBeClickable(gear));
-        actions.moveToElement(menMenuElement).perform();
+        action.moveToElement(menMenuElement).perform();
         driver.findElement(bags).click();
         return new productPage(driver);
     }

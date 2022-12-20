@@ -49,7 +49,7 @@ public class productPage {
 
     public void addToCart(String qty) {
         driver.findElement(addToCart).click();
-        new WebDriverWait(driver, 10).until(ExpectedConditions.textToBePresentInElementLocated(counterCart, qty));
+        new WebDriverWait(driver, 20).until(ExpectedConditions.textToBePresentInElementLocated(counterCart, qty));
     }
 
     public void clickProduct(Integer index) {
@@ -75,12 +75,14 @@ public class productPage {
         return driver.findElement(etQty).getAttribute("value");
     }
 
+
     public List<DataProduct> getCart() {
         WebElement cart = new WebDriverWait(driver, 10).until(ExpectedConditions.visibilityOfElementLocated(this.cart));
         List<WebElement> productList = cart.findElements(cartPorduct);
         List<DataProduct> dataProducts = new ArrayList<>();
         for (WebElement product : productList) {
-            DataProduct dataProduct = new DataProduct(product.findElement(cartProductName).getText(), product.findElement(cartProductQty).getAttribute("value"));
+            DataProduct dataProduct = new DataProduct(product.findElement(cartProductName).getText(), product.findElement(cartProductQty).
+                    getAttribute("value"));
             dataProducts.add(dataProduct);
         }
         Collections.reverse(dataProducts);
